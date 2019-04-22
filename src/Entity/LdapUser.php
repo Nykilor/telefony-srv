@@ -24,15 +24,15 @@ class LdapUser
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=20, unique=true)
      */
     private $login;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Domain", inversedBy="relation_id")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Domain")
+     * @ORM\JoinColumn(name="domain_id", referencedColumnName="id")
      */
-    private $domain_id;
+    private $domain;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -40,12 +40,12 @@ class LdapUser
     private $first_name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $last_name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $biuro;
 
@@ -70,7 +70,7 @@ class LdapUser
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $title;
 
@@ -78,6 +78,11 @@ class LdapUser
      * @ORM\OneToMany(targetEntity="App\Entity\PhoneNumbers", mappedBy="user_id")
      */
     private $phoneNumbers_id;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $when_changed;
 
     public function __construct()
     {
@@ -103,12 +108,12 @@ class LdapUser
 
     public function getDomainId(): ?Domain
     {
-        return $this->domain_id;
+        return $this->domain;
     }
 
-    public function setDomainId(?Domain $domain_id): self
+    public function setDomainId(?Domain $domain): self
     {
-        $this->domain_id = $domain_id;
+        $this->domain = $domain;
 
         return $this;
     }
@@ -130,7 +135,7 @@ class LdapUser
         return $this->last_name;
     }
 
-    public function setLastName(string $last_name): self
+    public function setLastName(?string $last_name): self
     {
         $this->last_name = $last_name;
 
@@ -142,7 +147,7 @@ class LdapUser
         return $this->biuro;
     }
 
-    public function setBiuro(string $biuro): self
+    public function setBiuro(?string $biuro): self
     {
         $this->biuro = $biuro;
 
@@ -202,7 +207,7 @@ class LdapUser
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -236,6 +241,18 @@ class LdapUser
                 $phoneNumbersId->setUserId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getWhenChanged(): ?\DateTimeInterface
+    {
+        return $this->when_changed;
+    }
+
+    public function setWhenChanged(\DateTimeInterface $when_changed): self
+    {
+        $this->when_changed = $when_changed;
 
         return $this;
     }

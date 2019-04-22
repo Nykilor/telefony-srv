@@ -3,12 +3,57 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 /**
- * @ApiResource()
+ * @ApiResource(
+ *  itemOperations={
+ *      "get"={"method"="GET"},
+ *      "put"={"method"="PUT"},
+ *      "delete"={"method"="DELETE"},
+ *      "LdapGetData"={
+ *        "normalization_context"={"groups"={"ldap-r"}},
+ *        "denormalization_context"={"groups"={"Ldap"}},
+ *        "method"="POST",
+ *        "route_name"="LdapGetData",
+ *        "swagger_context" = {
+ *          "parameters" = {
+ *            {
+ *              "name" = "id",
+ *              "in" = "path",
+ *              "required" = "true",
+ *              "type" = "integer",
+ *              "description" = "Domain ID with whom should the data be fetched"
+ *            },
+ *            {
+ *              "name" = "credentials",
+ *              "in" = "body",
+ *              "required" = "true",
+ *              "schema" = {
+ *                 "type" = "object",
+ *                 "properties" = {
+ *                  "login" = {
+ *                    "type" = "string"
+ *                  },
+ *                  "password" = {
+ *                    "type" = "string"
+ *                   }
+ *                }
+ *              }
+ *            }
+ *          },
+ *          "responses" = {
+ *            "200" = {
+ *              "description" = "The count of changes will be in response."
+ *            }
+ *          },
+ *          "summary" = "Fetches data from given LDAP schema."
+ *        }
+ *      }
+ *   }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\DomainRepository")
  */
 class Domain
@@ -21,7 +66,7 @@ class Domain
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $prefix;
 
@@ -41,39 +86,44 @@ class Domain
     private $connection_schema;
 
     /**
-     * @ORM\Column(type="integer", options={"default": 389})
+     * @ORM\Column(type="integer")
      */
     private $port;
 
     /**
-     * @ORM\Column(type="boolean", options={"default": 0})
+     * @ORM\Column(type="boolean")
      */
     private $use_ssl;
 
     /**
-     * @ORM\Column(type="boolean", options={"default": 0})
+     * @ORM\Column(type="boolean")
      */
     private $use_tls;
 
     /**
-     * @ORM\Column(type="integer", options={"default": 3})
+     * @ORM\Column(type="integer")
      */
     private $version;
 
     /**
-     * @ORM\Column(type="integer", options={"default": 5})
+     * @ORM\Column(type="integer")
      */
     private $timeout;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @ORM\Column(type="array")
      */
     private $custom = [];
 
-    public function __construct()
-    {
-        $this->relation_id = new ArrayCollection();
-    }
+    /**
+     * @Groups({"ldap","ldap-r"})
+     */
+    private $login;
+
+    /**
+     * @Groups({"ldap","ldap-r"})
+     */
+    private $password;
 
     public function getId(): ?int
     {
@@ -85,7 +135,7 @@ class Domain
         return $this->prefix;
     }
 
-    public function setPrefix(string $prefix): self
+    public function setPrefix(?string $prefix): self
     {
         $this->prefix = $prefix;
 
@@ -193,9 +243,33 @@ class Domain
         return $this->custom;
     }
 
-    public function setCustom(?array $custom): self
+    public function setCustom(array $custom): self
     {
         $this->custom = $custom;
+
+        return $this;
+    }
+
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(?string $login): self
+    {
+        $this->login = $login;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
 
         return $this;
     }
