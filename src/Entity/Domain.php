@@ -8,52 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
- *  itemOperations={
- *      "get"={"method"="GET"},
- *      "put"={"method"="PUT"},
- *      "delete"={"method"="DELETE"},
- *      "LdapGetData"={
- *        "normalization_context"={"groups"={"ldap-r"}},
- *        "denormalization_context"={"groups"={"Ldap"}},
- *        "method"="POST",
- *        "route_name"="LdapGetData",
- *        "swagger_context" = {
- *          "parameters" = {
- *            {
- *              "name" = "id",
- *              "in" = "path",
- *              "required" = "true",
- *              "type" = "integer",
- *              "description" = "Domain ID with whom should the data be fetched"
- *            },
- *            {
- *              "name" = "credentials",
- *              "in" = "body",
- *              "required" = "true",
- *              "schema" = {
- *                 "type" = "object",
- *                 "properties" = {
- *                  "login" = {
- *                    "type" = "string"
- *                  },
- *                  "password" = {
- *                    "type" = "string"
- *                   }
- *                }
- *              }
- *            }
- *          },
- *          "responses" = {
- *            "200" = {
- *              "description" = "The count of changes will be in response."
- *            }
- *          },
- *          "summary" = "Fetches data from given LDAP schema."
- *        }
- *      }
- *   }
- * )
+ * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\DomainRepository")
  */
 class Domain
@@ -66,7 +21,7 @@ class Domain
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $prefix;
 
@@ -114,16 +69,6 @@ class Domain
      * @ORM\Column(type="array")
      */
     private $custom = [];
-
-    /**
-     * @Groups({"ldap","ldap-r"})
-     */
-    private $login;
-
-    /**
-     * @Groups({"ldap","ldap-r"})
-     */
-    private $password;
 
     public function getId(): ?int
     {
@@ -246,30 +191,6 @@ class Domain
     public function setCustom(array $custom): self
     {
         $this->custom = $custom;
-
-        return $this;
-    }
-
-    public function getLogin(): ?string
-    {
-        return $this->login;
-    }
-
-    public function setLogin(?string $login): self
-    {
-        $this->login = $login;
-
-        return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(?string $password): self
-    {
-        $this->password = $password;
 
         return $this;
     }

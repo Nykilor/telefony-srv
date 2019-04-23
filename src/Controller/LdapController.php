@@ -23,8 +23,6 @@ class LdapGetDataController extends AbstractController {
    * )
    */
     public function fetch(Domain $data, ActiveDirectoryFetch $class, Request $request) {
-      var_dump($data, $request->getContent());
-      exit();
       $response = $class->fetchData($data);
 
       return $this->json($response);
