@@ -3,15 +3,61 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Dto\LdapFetchInput;
+use App\Controller\LdapFetchController;
+
 use Doctrine\ORM\Mapping as ORM;
 
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
- * @ApiResource()
+ * @ApiResource(
+ *   itemOperations={
+ *      "get"={"method"="GET"},
+ *      "put"={"method"="PUT"},
+ *      "delete"={"method"="DELETE"},
+ *      "LdapGetData"={
+ *        "path"="/api/domain/ldap_fetch/{id}",
+ *        "controller"=LdapFetchController::class,
+ *        "input"=LdapFetchInput::class,
+ *        "output"=false,
+ *        "method"="POST",
+ *        "swagger_context" = {
+ *          "parameters" = {
+ *            {
+ *              "name" = "id",
+ *              "in" = "path",
+ *              "required" = "true",
+ *              "type" = "integer",
+ *              "description" = "ID of Domain which will be used to fetch the data by."
+ *            },
+ *            {
+ *              "name" = "credentials",
+ *              "in" = "body",
+ *              "required" = "true",
+ *              "schema" = {
+ *                 "type" = "object",
+ *                 "properties" = {
+ *                  "login" = {
+ *                    "type" = "string"
+ *                  },
+ *                  "password" = {
+ *                    "type" = "string"
+ *                   }
+ *                }
+ *              }
+ *            }
+ *          },
+ *          "responses" = {
+ *            "200" = {
+ *              "description" = "The count of changes will be in response."
+ *            }
+ *          }
+ *        }
+ *      }
+ *   }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\DomainRepository")
  */
-class Domain
+final class Domain
 {
     /**
      * @ORM\Id()

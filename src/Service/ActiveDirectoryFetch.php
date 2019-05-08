@@ -3,9 +3,9 @@
 namespace App\Service;
 use DateTime;
 
+use App\Dto\LdapFetchInput;
 use App\Entity\LdapUser;
 use App\Entity\PhoneNumbers;
-use App\Entity\Domain;
 use Adldap\Adldap;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -14,24 +14,27 @@ class ActiveDirectoryFetch {
   public $userCount = 0;
   public $phoneCount = 0;
   protected $domain;
+  protected $login;
+  protected $password;
   protected $entityManager;
 
   public function __construct(EntityManagerInterface $entityManager) {
     $this->entityManager = $entityManager;
   }
 
-  public function fetchData(Domain $domain) {
-    $this->domain = $domain;
+  public function fetchData(LdapFetchInput $domain) {
+    $this->domain = $domain->domain;
+    $this->login = $domain->login;
+    $this->password = $domain->password;
 
-    $domainRepository = $this->entityManager->getRepository(Domain::class);
-    // $domain = $this->connectByLdap($domainEntity);
-    // $users = $domain->search()->users()->in("OU=User,OU=ima-pl,OU=Administration,DC=ima-pl,DC=local")->get();
-    $users = unserialize(file_get_contents("serializedforhome.txt"));
+    $domain = $this->connectByLdap();
+    $users = $domain->search()->users()->in("OU=User,OU=ima-pl,OU=Administration,DC=ima-pl,DC=local")->get();
+    // $users = unserialize(file_get_contents("serializedforhome.txt"));
     $databaseEntries = [];
     $counter = 0;
     foreach ($users as $key => $adldapUserModel) {
       //Write on github about this
-      $ldapUserEntity = $this->getOrCreateLdapUserEntity($adldapUserModel, $this->domain);
+      $ldapUserEntity = $this->getOrCreateLdapUserEntity($adldapUserModel);
       if(!is_null($ldapUserEntity)) {
         $declaredDate = $ldapUserEntity->getWhenChanged();
         $newDate = new DateTime(str_replace(".0Z", "", $adldapUserModel->getUpdatedAt()));
@@ -69,17 +72,17 @@ class ActiveDirectoryFetch {
     ];
   }
 
-  private function getOrCreateLdapUserEntity(\Adldap\Models\User $adldapUserModel, Domain $domainEntity) : ?LdapUser {
+  private function getOrCreateLdapUserEntity(\Adldap\Models\User $adldapUserModel) : ?LdapUser {
     $repositoryLdapUser = $this->entityManager->getRepository(LdapUser::class);
     $userEntity = $repositoryLdapUser->findOneBy(["login" => $adldapUserModel->getAccountName()]);
 
     if(!($userEntity instanceof LdapUser)) {
       $userEntity = new LdapUser();
-      $userEntity->setDomainId($domainEntity);
+      $userEntity->setDomain($this->domain);
     }
 
     if(!is_null($adldapUserModel->getFirstName())) {
-      $userEntity->setLogin($adldapUserModel->getAccountName());
+      $userEntity->setLogin($this->domain->getPrefix()."\\".$adldapUserModel->getAccountName());
       $userEntity->setFirstName($adldapUserModel->getFirstName());
       $userEntity->setLastName($adldapUserModel->getLastName());
       $userEntity->setDepartment($adldapUserModel->getDepartment());
@@ -124,7 +127,7 @@ class ActiveDirectoryFetch {
       //If no entry in database create a new Entity
       if(!($phoneNumbersEntity instanceof PhoneNumbers)) {
         $phoneNumbersEntity = new PhoneNumbers();
-      } else if($phoneNumbersEntity->getUserId()->getId() === $ldapUserEntity->getId()) {
+      } else if($phoneNumbersEntity->getUser()->getId() === $ldapUserEntity->getId()) {
         //Continue if the current value didn't change it's owner
         continue;
       }
@@ -133,16 +136,18 @@ class ActiveDirectoryFetch {
       $phoneNumbersEntity->setValue($phone["value"]);
       $this->entityManager->persist($phoneNumbersEntity);
       $this->phoneCount++;
-      $ldapUserEntity->addPhoneNumbersId($phoneNumbersEntity);
+      $ldapUserEntity->addPhoneNumbers($phoneNumbersEntity);
     }
 
     return $ldapUserEntity;
 
   }
 
-  private function connectByLdap(Domain $entity) {
-    $user = $this->domain->getLogin();
-    $password = $this->domain->getPassword();
+  private function connectByLdap() {
+    $user = $this->login;
+    $password = $this->password;
+    $entity = $this->domain;
+
     // Create the configuration array.
     $ldapClass = $entity->getConnectionSchema();
     //Do ogarniecia tak, żeby ładowało ok

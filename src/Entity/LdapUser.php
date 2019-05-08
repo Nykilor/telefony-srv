@@ -77,7 +77,7 @@ class LdapUser
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\PhoneNumbers", mappedBy="user_id")
      */
-    private $phoneNumbers_id;
+    private $phoneNumbers;
 
     /**
      * @ORM\Column(type="datetime")
@@ -86,7 +86,7 @@ class LdapUser
 
     public function __construct()
     {
-        $this->phoneNumbers_id = new ArrayCollection();
+        $this->phoneNumbers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -106,12 +106,12 @@ class LdapUser
         return $this;
     }
 
-    public function getDomainId(): ?Domain
+    public function getDomain(): ?Domain
     {
         return $this->domain;
     }
 
-    public function setDomainId(?Domain $domain): self
+    public function setDomain(?Domain $domain): self
     {
         $this->domain = $domain;
 
@@ -217,28 +217,28 @@ class LdapUser
     /**
      * @return Collection|PhoneNumbers[]
      */
-    public function getPhoneNumbersId(): Collection
+    public function getPhoneNumbers(): Collection
     {
-        return $this->phoneNumbers_id;
+        return $this->phoneNumbers;
     }
 
-    public function addPhoneNumbersId(PhoneNumbers $phoneNumbersId): self
+    public function addPhoneNumbers(PhoneNumbers $phoneNumbersId): self
     {
-        if (!$this->phoneNumbers_id->contains($phoneNumbersId)) {
-            $this->phoneNumbers_id[] = $phoneNumbersId;
-            $phoneNumbersId->setUserId($this);
+        if (!$this->phoneNumbers->contains($phoneNumbersId)) {
+            $this->phoneNumbers[] = $phoneNumbersId;
+            $phoneNumbersId->setUser($this);
         }
 
         return $this;
     }
 
-    public function removePhoneNumbersId(PhoneNumbers $phoneNumbersId): self
+    public function removePhoneNumbers(PhoneNumbers $phoneNumbersId): self
     {
-        if ($this->phoneNumbers_id->contains($phoneNumbersId)) {
-            $this->phoneNumbers_id->removeElement($phoneNumbersId);
+        if ($this->phoneNumbers->contains($phoneNumbersId)) {
+            $this->phoneNumbers->removeElement($phoneNumbersId);
             // set the owning side to null (unless already changed)
-            if ($phoneNumbersId->getUserId() === $this) {
-                $phoneNumbersId->setUserId(null);
+            if ($phoneNumbersId->getUser() === $this) {
+                $phoneNumbersId->setUser(null);
             }
         }
 

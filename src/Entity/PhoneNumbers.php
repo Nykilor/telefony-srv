@@ -24,7 +24,7 @@ class PhoneNumbers
      * @ORM\ManyToOne(targetEntity="App\Entity\LdapUser", inversedBy="phoneNumbers_id")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user_id;
+    private $user;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -41,14 +41,14 @@ class PhoneNumbers
         return $this->id;
     }
 
-    public function getUserId(): ?LdapUser
+    public function getUser(): ?LdapUser
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(?LdapUser $user_id): self
+    public function setUser(?LdapUser $user): self
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }
