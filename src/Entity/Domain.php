@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      "put"={"method"="PUT"},
  *      "delete"={"method"="DELETE"},
  *      "LdapGetData"={
- *        "path"="/api/domain/ldap_fetch/{id}",
+ *        "path"="/domain/ldap_fetch/{id}",
  *        "controller"=LdapFetchController::class,
  *        "input"=LdapFetchInput::class,
  *        "output"=false,
