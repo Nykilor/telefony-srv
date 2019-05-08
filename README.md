@@ -6,6 +6,7 @@ Quick setup:
 =====
  * fill the database information in .env  
  * composer install  
+ * You got to use my fork of adldap2 to this project to work (missing some methods the pull request is on)  
  * php bin\console doctrine:schema:create  
  * php bin\console doctrine:schema:update --force  
  * php bin\console server:run  
