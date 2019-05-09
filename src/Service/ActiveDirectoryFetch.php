@@ -26,9 +26,20 @@ class ActiveDirectoryFetch {
     $this->domain = $domain->domain;
     $this->login = $domain->login;
     $this->password = $domain->password;
+    $this->query = $domain->$query;
 
     $domain = $this->connectByLdap();
-    $users = $domain->search()->users()->in("OU=User,OU=ima-pl,OU=Administration,DC=ima-pl,DC=local")->get();
+
+    switch ($this->query) {
+      case 'allUsers':
+        $users = $search->users()->get();
+        break;
+
+      default:
+        $users = $domain->search()->users()->in("OU=User,OU=ima-pl,OU=Administration,DC=ima-pl,DC=local")->get();
+        break;
+    }
+
     // $users = unserialize(file_get_contents("serializedforhome.txt"));
     $databaseEntries = [];
     $counter = 0;

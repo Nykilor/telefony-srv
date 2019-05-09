@@ -41,7 +41,11 @@ use Doctrine\ORM\Mapping as ORM;
  *                  },
  *                  "password" = {
  *                    "type" = "string"
- *                   }
+ *                  },
+ *                  "query" = {
+ *                    "type" = "string",
+ *                    "default" = "allUsers"
+ *                  }
  *                }
  *              }
  *            }
@@ -49,6 +53,9 @@ use Doctrine\ORM\Mapping as ORM;
  *          "responses" = {
  *            "200" = {
  *              "description" = "The count of changes will be in response."
+ *            },
+ *            "400" = {
+ *              "description" = "There was an error while procesing the request, the reason is in the response."
  *            }
  *          }
  *        }
