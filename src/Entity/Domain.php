@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ApiResource(
+ *   attributes={"access_control"="is_granted('ROLE_ADMIN')"},
  *   itemOperations={
  *      "get"={"method"="GET"},
  *      "put"={"method"="PUT"},
@@ -21,6 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  *        "output"=false,
  *        "method"="POST",
  *        "swagger_context" = {
+ *          "summary"="Creates LdapUsers and PhoneNumbers.",
  *          "parameters" = {
  *            {
  *              "name" = "id",
@@ -44,7 +46,8 @@ use Doctrine\ORM\Mapping as ORM;
  *                  },
  *                  "query" = {
  *                    "type" = "string",
- *                    "default" = "allUsers"
+ *                    "default" = "allUsers",
+ *                    "value" = "test"
  *                  }
  *                }
  *              }
