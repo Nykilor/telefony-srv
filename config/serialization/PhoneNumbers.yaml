@@ -1,0 +1,8 @@
+App\Entity\PhoneNumbers:
+  attributes:
+    id:
+      groups: ["read_ldap_user", "read_phone_numbers"]
+    type:
+      groups: ["read_ldap_user", "read_phone_numbers"]
+    value:
+      groups: ["read_ldap_user", "read_phone_numbers"]

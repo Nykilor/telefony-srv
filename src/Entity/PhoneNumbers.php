@@ -2,13 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(
- *  collectionOperations={"get"},
- *  itemOperations={"get"})
+ * ApiResource, config in config/api_platform/PhoneNumbers.yaml
  * @ORM\Entity(repositoryClass="App\Repository\PhoneNumbersRepository")
  */
 class PhoneNumbers
@@ -21,10 +18,10 @@ class PhoneNumbers
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\LdapUser", inversedBy="phoneNumbers_id")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\LdapUser", inversedBy="phoneNumbers")
+     * @ORM\JoinColumn(name="ldap_user_id", nullable=false)
      */
-    private $user;
+    private $ldap_user;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -41,14 +38,14 @@ class PhoneNumbers
         return $this->id;
     }
 
-    public function getUser(): ?LdapUser
+    public function getLdapUser(): ?LdapUser
     {
-        return $this->user;
+        return $this->ldap_user;
     }
 
-    public function setUser(?LdapUser $user): self
+    public function setLdapUser(?LdapUser $ldap_user): self
     {
-        $this->user = $user;
+        $this->ldap_user = $ldap_user;
 
         return $this;
     }

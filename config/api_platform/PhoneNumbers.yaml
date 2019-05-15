@@ -1,0 +1,11 @@
+resources:
+  App\Entity\PhoneNumbers:
+    collectionOperations:
+      get:
+        method: 'GET'
+    itemOperations:
+      get:
+        method: 'GET'
+    attributes:
+      normalization_context:
+        groups: ["read_phone_numbers"]

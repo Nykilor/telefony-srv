@@ -2,16 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(
- *  collectionOperations={"get"},
- *  itemOperations={"get"}
- * )
+ * ApiResource, config in config/api_platform/LdapUser.yaml
  * @ORM\Entity(repositoryClass="App\Repository\LdapUserRepository")
  */
 class LdapUser
@@ -24,7 +20,7 @@ class LdapUser
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=20, unique=true)
+     * @ORM\Column(type="string", length=60, unique=true)
      */
     private $login;
 
@@ -75,7 +71,7 @@ class LdapUser
     private $title;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PhoneNumbers", mappedBy="user_id")
+     * @ORM\OneToMany(targetEntity="App\Entity\PhoneNumbers", mappedBy="ldap_user")
      */
     private $phoneNumbers;
 
@@ -83,6 +79,11 @@ class LdapUser
      * @ORM\Column(type="datetime")
      */
     private $when_changed;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": 0})
+     */
+    private $is_visible = true;
 
     public function __construct()
     {
@@ -226,7 +227,7 @@ class LdapUser
     {
         if (!$this->phoneNumbers->contains($phoneNumbersId)) {
             $this->phoneNumbers[] = $phoneNumbersId;
-            $phoneNumbersId->setUser($this);
+            $phoneNumbersId->setLdapUser($this);
         }
 
         return $this;
@@ -237,8 +238,8 @@ class LdapUser
         if ($this->phoneNumbers->contains($phoneNumbersId)) {
             $this->phoneNumbers->removeElement($phoneNumbersId);
             // set the owning side to null (unless already changed)
-            if ($phoneNumbersId->getUser() === $this) {
-                $phoneNumbersId->setUser(null);
+            if ($phoneNumbersId->getLdapUser() === $this) {
+                $phoneNumbersId->setLdapUser(null);
             }
         }
 
@@ -253,6 +254,18 @@ class LdapUser
     public function setWhenChanged(\DateTimeInterface $when_changed): self
     {
         $this->when_changed = $when_changed;
+
+        return $this;
+    }
+
+    public function getIsVisible(): ?bool
+    {
+        return $this->is_visible;
+    }
+
+    public function setIsVisible(bool $is_visible): self
+    {
+        $this->is_visible = $is_visible;
 
         return $this;
     }

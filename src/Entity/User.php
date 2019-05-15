@@ -4,27 +4,9 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Controller\RegisterUserController;
 
 /**
- * @ApiResource(
- *  attributes={"access_control"="is_granted('ROLE_ADMIN')"},
- *  collectionOperations={"get"},
- *  itemOperations={
- *    "get"={"method"="GET"},
- *    "delete"={"method"="DELETE"},
- *    "put"={"method"="PUT"},
- *    "post_users_register"={
- *        "method"="POST",
- *        "path"="/users",
- *        "controller"=RegisterUserController::class,
- *        "defaults"={"_api_receive"=false},
- *        "access_control"="is_granted('ROLE_ADMIN')",
- *        "access_control_message"="Only admins can create Users."
- *    }
- *  }
- * )
+ * ApiResource, config in config/api_platform/User.yaml
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface

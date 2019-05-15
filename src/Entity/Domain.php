@@ -2,72 +2,14 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Dto\LdapFetchInput;
-use App\Controller\LdapFetchController;
-
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(
- *   attributes={"access_control"="is_granted('ROLE_ADMIN')"},
- *   itemOperations={
- *      "get"={"method"="GET"},
- *      "put"={"method"="PUT"},
- *      "delete"={"method"="DELETE"},
- *      "LdapGetData"={
- *        "path"="/domain/ldap_fetch/{id}",
- *        "controller"=LdapFetchController::class,
- *        "input"=LdapFetchInput::class,
- *        "output"=false,
- *        "method"="POST",
- *        "swagger_context" = {
- *          "summary"="Creates LdapUsers and PhoneNumbers.",
- *          "parameters" = {
- *            {
- *              "name" = "id",
- *              "in" = "path",
- *              "required" = "true",
- *              "type" = "integer",
- *              "description" = "ID of Domain which will be used to fetch the data by."
- *            },
- *            {
- *              "name" = "credentials",
- *              "in" = "body",
- *              "required" = "true",
- *              "schema" = {
- *                 "type" = "object",
- *                 "properties" = {
- *                  "login" = {
- *                    "type" = "string"
- *                  },
- *                  "password" = {
- *                    "type" = "string"
- *                  },
- *                  "query" = {
- *                    "type" = "string",
- *                    "default" = "allUsers",
- *                    "value" = "test"
- *                  }
- *                }
- *              }
- *            }
- *          },
- *          "responses" = {
- *            "200" = {
- *              "description" = "The count of changes will be in response."
- *            },
- *            "400" = {
- *              "description" = "There was an error while procesing the request, the reason is in the response."
- *            }
- *          }
- *        }
- *      }
- *   }
- * )
+ * ApiResource, config in config/api_platform/Domain.yaml
+ *
  * @ORM\Entity(repositoryClass="App\Repository\DomainRepository")
  */
-final class Domain
+class Domain
 {
     /**
      * @ORM\Id()

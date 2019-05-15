@@ -1,0 +1,16 @@
+resources:
+  App\Entity\LdapUser:
+    collectionOperations:
+      get:
+        method: 'GET'
+    itemOperations:
+      get:
+        method: 'GET'
+    attributes:
+      normalization_context:
+        groups: ["read_ldap_user"]
+    properties:
+      phoneNumbers:
+          subresource:
+              resourceClass: 'App\Entity\PhoneNumbers'
+              collection: true

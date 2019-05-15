@@ -1,0 +1,68 @@
+resources:
+  App\Entity\User:
+    attributes:
+      access_control: is_granted('ROLE_ADMIN')
+    collectionOperations:
+      get:
+        method: 'GET'
+    itemOperations:
+      get:
+        method: 'GET'
+      delete:
+        method: 'DELETE'
+      put:
+        method: 'PUT'
+      post_users_register:
+        method: 'POST'
+        path: /users
+        controller: App\Controller\RegisterUserController
+        defaults:
+          _api_receive: false
+        access_control_message: "Only admins can create Users"
+      auth:
+        route_name: api_login
+        swagger_context:
+          summary: Performs a login attempt, returning a valid token on success
+          parameters:
+            - name: username
+              required: true
+              type: string
+              description: "User's username"
+            - name: password
+              required: true
+              type: string
+              description: "User's password"
+          responses:
+            200:
+              description: "Successful login attempt, returning a new token"
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                      username:
+                        type: string
+            401:
+              description: "Bad credentials"
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: "Bad credentials"
+          consumes:
+            - "application/json"
+          produces:
+            - "application/json"

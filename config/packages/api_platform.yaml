@@ -3,7 +3,9 @@ api_platform:
     version: '1.0.0'
     show_webby: false
     mapping:
-        paths: ['%kernel.project_dir%/src/Entity']
+        paths:
+          - '%kernel.project_dir%/src/Entity' # default configuration for annotations
+          - '%kernel.project_dir%/config/api_platform' # yaml or xml directory configuration
     exception_to_status:
         Adldap\Auth\BindException: 400
     swagger:

@@ -26,23 +26,24 @@ class ActiveDirectoryFetch {
     $this->domain = $domain->domain;
     $this->login = $domain->login;
     $this->password = $domain->password;
-    $this->query = $domain->$query;
+    $this->query = $domain->query;
 
     $domain = $this->connectByLdap();
 
     switch ($this->query) {
       case 'allUsers':
-        $users = $search->users()->get();
+        $users = $domain->search()->users()->get();
         break;
 
       default:
-        $users = $domain->search()->users()->in("OU=User,OU=ima-pl,OU=Administration,DC=ima-pl,DC=local")->get();
+        $users = $domain->search()->users()->in($this->query)->get();
         break;
     }
 
     // $users = unserialize(file_get_contents("serializedforhome.txt"));
     $databaseEntries = [];
     $counter = 0;
+
     foreach ($users as $key => $adldapUserModel) {
       //Write on github about this
       $ldapUserEntity = $this->getOrCreateLdapUserEntity($adldapUserModel);
@@ -85,7 +86,7 @@ class ActiveDirectoryFetch {
 
   private function getOrCreateLdapUserEntity(\Adldap\Models\User $adldapUserModel) : ?LdapUser {
     $repositoryLdapUser = $this->entityManager->getRepository(LdapUser::class);
-    $userEntity = $repositoryLdapUser->findOneBy(["login" => $adldapUserModel->getAccountName()]);
+    $userEntity = $repositoryLdapUser->findOneBy(["login" => $this->domain->getPrefix()."\\".$adldapUserModel->getAccountName()]);
 
     if(!($userEntity instanceof LdapUser)) {
       $userEntity = new LdapUser();
@@ -138,7 +139,7 @@ class ActiveDirectoryFetch {
       //If no entry in database create a new Entity
       if(!($phoneNumbersEntity instanceof PhoneNumbers)) {
         $phoneNumbersEntity = new PhoneNumbers();
-      } else if($phoneNumbersEntity->getUser()->getId() === $ldapUserEntity->getId()) {
+      } else if($phoneNumbersEntity->getLdapUser()->getId() === $ldapUserEntity->getId()) {
         //Continue if the current value didn't change it's owner
         continue;
       }

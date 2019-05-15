@@ -1,0 +1,30 @@
+App\Entity\LdapUser:
+  attributes:
+    id:
+      groups: ["read_ldap_user"]
+    login:
+      groups: ["read_ldap_user"]
+    domain:
+      groups: ["read_ldap_user"]
+    first_name:
+      groups: ["read_ldap_user"]
+    last_name:
+      groups: ["read_ldap_user"]
+    biuro:
+      groups: ["read_ldap_user"]
+    email:
+      groups: ["read_ldap_user"]
+    company:
+      groups: ["read_ldap_user"]
+    department:
+      groups: ["read_ldap_user"]
+    description:
+      groups: ["read_ldap_user"]
+    title:
+      groups: ["read_ldap_user"]
+    phoneNumbers:
+      groups: ["read_ldap_user"]
+    when_changed:
+      groups: ["read_ldap_user"]
+    is_visible:
+      groups: ["read_ldap_user"]
