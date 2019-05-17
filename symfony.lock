@@ -19,6 +19,9 @@
             "./src/Entity/.gitignore"
         ]
     },
+    "behat/transliterator": {
+        "version": "v1.2.0"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -106,6 +109,9 @@
     },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
+    },
+    "jeroendesloovere/vcard": {
+        "version": "1.7.2"
     },
     "lcobucci/jwt": {
         "version": "3.2.5"

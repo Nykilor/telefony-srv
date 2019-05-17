@@ -7,5 +7,6 @@ resources:
       get:
         method: 'GET'
     attributes:
+      pagination_enabled: false
       normalization_context:
         groups: ["read_phone_numbers"]

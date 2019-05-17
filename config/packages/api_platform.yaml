@@ -13,3 +13,9 @@ api_platform:
              apiKey:
                 name: Authorization
                 type: header
+    #formats:
+    #    jsonld:   ['application/ld+json']
+    #    json:     ['application/json']
+    #    xml:      ['application/xml', 'text/xml']
+    #    csv:      ['text/csv']
+    #    html:     ['text/html']

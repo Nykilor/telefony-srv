@@ -3,12 +3,47 @@ resources:
     collectionOperations:
       get:
         method: 'GET'
+#      generate_vcf:
+#        method: 'GET'
+#        path: vcf
+#        controller: App\Controller\GenerateVcfController
+#        swagger_context:
+#          summary: 'Returns a .vcf file based on the LdapUsers.'
+#          responses:
+#            200:
+#              description: "File download."
+#            400:
+#              description: "There was an error while procesing the request, the reason is in the response."
     itemOperations:
       get:
         method: 'GET'
+#      generate_vcf_by_id:
+#        method: 'GET'
+#        path: 'ldap_users/{id}/vcf'
+#        controller: App\Controller\GenerateVcfController
+#        swagger_context:
+#          summary: 'Returns a .vcf file based on the LdapUsers.'
+#          parameters:
+#            - in: path
+#              name: id
+#              required: true
+#              type: integer
+#              description: 'ID of LdapUser.'
+#          responses:
+#            200:
+#              description: "File download."
+#            400:
+#              description: "There was an error while procesing the request, the reason is in the response."
+
     attributes:
+      formats:
+        0: 'json'
+        vcard: 'text/x-vcard'
+        1: 'jsonld'
+        csv: 'text/csv'
       normalization_context:
         groups: ["read_ldap_user"]
+      pagination_enabled: false
     properties:
       phoneNumbers:
           subresource:

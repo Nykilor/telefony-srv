@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2eb0ba26cd2c4d8fdb97701ea7e34ff3",
+    "content-hash": "4787d02006cb88ea6add74a53c223a60",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -240,6 +240,50 @@
                 "swagger"
             ],
             "time": "2019-03-28T20:16:27+00:00"
+        },
+        {
+            "name": "behat/transliterator",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Behat/Transliterator.git",
+                "reference": "826ce7e9c2a6664c0d1f381cbb38b1fb80a7ee2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Behat/Transliterator/zipball/826ce7e9c2a6664c0d1f381cbb38b1fb80a7ee2c",
+                "reference": "826ce7e9c2a6664c0d1f381cbb38b1fb80a7ee2c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "chuyskywalker/rolling-curl": "^3.1",
+                "php-yaoi/php-yaoi": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Behat\\Transliterator": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Artistic-1.0"
+            ],
+            "description": "String transliterator",
+            "keywords": [
+                "i18n",
+                "slug",
+                "transliterator"
+            ],
+            "time": "2017-04-04T11:38:05+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -1577,6 +1621,55 @@
                 "sql"
             ],
             "time": "2014-01-12T16:20:24+00:00"
+        },
+        {
+            "name": "jeroendesloovere/vcard",
+            "version": "1.7.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jeroendesloovere/vcard.git",
+                "reference": "21a7341a589d80196a55e1f6317468a93e57c104"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jeroendesloovere/vcard/zipball/21a7341a589d80196a55e1f6317468a93e57c104",
+                "reference": "21a7341a589d80196a55e1f6317468a93e57c104",
+                "shasum": ""
+            },
+            "require": {
+                "behat/transliterator": "~1.0",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.6.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "JeroenDesloovere\\VCard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jeroen Desloovere",
+                    "email": "info@jeroendesloovere.be",
+                    "homepage": "http://jeroendesloovere.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This VCard PHP class can generate a vCard with some data. When using an iOS device it will export as a .ics file because iOS devices don't support the default .vcf files.",
+            "homepage": "https://github.com/jeroendesloovere/vcard",
+            "keywords": [
+                ".vcf",
+                "generator",
+                "php",
+                "vCard"
+            ],
+            "time": "2019-03-02T13:21:03+00:00"
         },
         {
             "name": "lcobucci/jwt",
