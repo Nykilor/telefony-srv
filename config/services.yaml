@@ -35,3 +35,6 @@ services:
 
     App\Serializer\VcardEncoder:
       tags: ['serializer.encoder']
+
+    App\Serializer\VcardNormalizer:
+      tags: ['serializer.normalizer']

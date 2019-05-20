@@ -4,39 +4,46 @@ namespace App\Service;
 
 use JeroenDesloovere\VCard\VCard;
 
+use App\Exception\SerializationEncodeOperationTypeException;
+use App\Exception\PhoneNumbersUnknownTypeException;
+
 class VcfFactory {
 
   public $vcf;
   public $vcf_output;
 
-  public function create($data) {
-    if(is_array($data) && !array_key_exists("id", $data)) {
+  public function create($data, $type) {
+    if($type === "collection") {
       $vcf_array = [];
-      foreach ($data as $key => $ldapUserEntity) {
-          $vcf_object = $this->createVcf($ldapUserEntity);
+      foreach ($data as $key => $ldapUser) {
+        if($ldapUser["is_visible"]) {
+          $vcf_object = $this->createVcf($ldapUser);
           $this->vcf[] = $vcf_object;
           $vcf_array[] = $vcf_object->getOutput();
+        }
       }
       $this->vcf_output = implode("", $vcf_array);
+    } else if($type === "item") {
+      if($data["is_visible"]) {
+        $vcf_object = $this->createVcf($data);
+        $this->vcf = $vcf_object;
+        $this->vcf_output = $vcf_object->getOutput();
+      }
     } else {
-      $vcf_object = $this->createVcf($data);
-      $this->vcf = $vcf_object;
-      $this->vcfOutput = $vcf_object->getOutput();
+      throw new SerializationEncodeOperationTypeException("Unkown operation type.", 1);
     }
   }
 
   protected function createVcf($array) {
-    var_dump($array);
-    exit();
     $vcard = new VCard();
     $arrayPhoneNumbers = $array['phoneNumbers'];
-    $vcard->addName($array['lastName'], $array['firstName']);
+    $vcard->addName($array['last_name'], $array['first_name']);
     $vcard->addCompany($array['company']." - ".$array['department']);
     $vcard->addJobtitle($array['title']);
     $vcard->addEmail($array['email']);
 
     foreach ($arrayPhoneNumbers as $phoneNumber) {
-        switch ($phone['type']) {
+        switch ($phoneNumber['type']) {
           case 'cell':
             $vcard->addPhoneNumber($phoneNumber['value'], "PREF;WORK;CELL;VOICE");
             break;
@@ -47,7 +54,7 @@ class VcfFactory {
             $vcard->addPhoneNumber($phoneNumber['value'], "WORK;VOICE");
             break;
           default:
-            throw new \Exception("Undefined type.", 1);
+            throw new PhoneNumbersUnknownTypeException("Undefined type.", 1);
             break;
         }
     }
