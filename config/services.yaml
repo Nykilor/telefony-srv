@@ -32,7 +32,13 @@ services:
         class: App\EventListener\AuthenticationSuccessListener
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
+    #YeastarIPPhoneBOok mime TYPE
+    App\Serializer\YealinkIPPhoneBookEncoder:
+      tags: ['serializer.encoder']
 
+    App\Serializer\YealinkIPPhoneBookNormalizer:
+      tags: ['serializer.normalizer']
+    #VCARD MIME TYPE
     App\Serializer\VcardEncoder:
       tags: ['serializer.encoder']
 

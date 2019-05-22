@@ -12,6 +12,7 @@ resources:
         vcard: 'text/x-vcard'
         1: 'jsonld'
         csv: 'text/csv'
+        YealinkIPPhoneBook: application/vnd.xml.yealink
       normalization_context:
         groups: ["read_ldap_user"]
       pagination_enabled: false

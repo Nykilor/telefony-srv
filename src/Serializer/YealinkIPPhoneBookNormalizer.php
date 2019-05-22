@@ -2,16 +2,17 @@
 namespace App\Serializer;
 
 use App\Entity\LdapUser;
+use App\Service\XmlYealinkNormalizer;
+
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class VcardNormalizer implements NormalizerInterface
+class YealinkIPPhoneBookNormalizer implements NormalizerInterface
 {
     private $router;
     private $normalizer;
 
-    public function __construct(UrlGeneratorInterface $router, ObjectNormalizer $normalizer)
+    public function __construct(UrlGeneratorInterface $router, XmlYealinkNormalizer $normalizer)
     {
         $this->router = $router;
         $this->normalizer = $normalizer;
@@ -19,14 +20,13 @@ class VcardNormalizer implements NormalizerInterface
 
     public function normalize($topic, $format = null, array $context = [])
     {
-        $data = $this->normalizer->normalize($topic, $format, $context);
-
+        $data = $this->normalizer->normalize($topic);
         // Here, add, edit, or delete some data:
         return $data;
     }
 
     public function supportsNormalization($data, $format = null, array $context = [])
     {
-        return $data instanceof LdapUser && $format === "vcard";
+        return $data instanceof LdapUser && $format === "YealinkIPPhoneBook";
     }
 }
