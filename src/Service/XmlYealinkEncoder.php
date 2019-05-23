@@ -1,133 +1,99 @@
 <?php
 namespace App\Service;
 
-class XmlYealinkEncoder {
-  public $xml;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
 
-  public function encodeLdapUserArrayToSymfonyXmlEncoder($array) {
-    $new_array = [
-        "Menu" => []
-      ];
-    $groups = $this->groupByDepartment($array);
-    foreach ($groups as $key => $ldapUsers) {
-      $new_array["Menu"][] = [
-        "@Name" => $key,
-        "#" => $this->adjustLdapUsers($ldapUsers)
-      ];
-    }
+class XmlYealinkEncoder
+{
 
-    return $new_array;
-  }
+  /**
+   * Encodes the array given by XmlYealinkNormalizer
+   * @param  array  $data Normalized LdapUser Entity by XmlYealinkNormalizer
+   * @return string The xml structure
+   */
+    public function encode(array $data) : string
+    {
+        $groups = $this->groupByDepartment($data);
 
-  private function adjustLdapUsers($ldapUsers) {
-    $return_array = [
-      "Unit" => []
-    ];
-
-    foreach ($ldapUsers as $key => $singleLdapUser) {
-      if(!is_null($singleLdapUser["phoneNumbers"])) {
-        $ipphone = $this->getPhoneNumberByType($singleLdapUser["phoneNumbers"], "ipphone");
-        $cell = $this->getPhoneNumberByType($singleLdapUser["phoneNumbers"], "cell");
-        $home = $this->getPhoneNumberByType($singleLdapUser["phoneNumbers"], "home");
-
-        $return_array["Unit"][] = [
-          "@Name" => $singleLdapUser["first_name"]." ".$singleLdapUser["last_name"],
-          "@Phone1" => $ipphone["value"],
-          "@Phone2" => $cell["value"],
-          "@Phone3" => $home["value"],
-          "@default_photo" => "Resource:"
+        $menu_array = [
+          "Menu" => []
         ];
-      }
 
+        $menu_array["Menu"] = $this->createStructureForXmlEncoder($groups);
+
+        return $this->getEncodedData($menu_array);
     }
 
-    return $return_array;
-  }
+    /**
+     * Creates the xml structure from given array
+     * @param  array  $data Normalized LdapUser
+     * @return string       The xml structure
+     */
+    private function getEncodedData(array $data) : string
+    {
+        $xml_encoder = new XmlEncoder();
+        $result = $xml_encoder->encode($data, "xml", [
+          "xml_encoding" => "utf-8",
+          "xml_root_node_name" => "YealinkIPPhoneBook"
+        ]);
 
-  /**
-   * Creates Yealink Remote Phone book xml structure and saves it to $this->xml
-   * @param array $array [Encoded LdapUser entity array]
-   */
-  public function create(array $array) : void {
-    $string = '<?xml version="1.0" encoding="utf-8" ?> <YeastarIPPhoneBook>';
-
-    $groups = $this->groupByDepartment($array);
-
-    foreach ($groups as $key => $entries) {
-      $string .= $this->createMenuEntry($key, $entries);
+        return $result;
     }
 
-    $string .= "</YeastarIPPhoneBook>";
-    $this->xml = $string;
-  }
 
-  /**
-   * Creates an <Menu> element and the <Unit> elements that are inside.
-   * @param  string $name  The <Menu> name
-   * @param  array  $array The <Unit> data inside the Menu
-   * @return string        returns single <Menu><Unit/><Unit/>...</Menu>
-   */
-  private function createMenuEntry(string $name, array $array) : string {
-    $string = "";
-    $string .= '<Menu Name="'.$name.'">';
+    /**
+     * Adjusts the Normalized array for Symfony XmlEncoder
+     * @param  array  $groups The LdapUser array grouped by Department
+     * @return array          Structure for XmlEncoder
+     */
+    private function createStructureForXmlEncoder(array $groups) : array
+    {
+        $replace_menu = [];
+        foreach ($groups as $key => $unitArray) {
+            $add_to_replace = [];
+            $add_to_replace["@Name"] = $key;
+            foreach ($unitArray as $key => $value) {
+                $filledUnit = $this->removeEmptyUnit($value["Unit"]);
+                if (!is_null($filledUnit)) {
+                    $add_to_replace["Unit"][] = $value["Unit"];
+                }
+            }
+            $replace_menu[] = $add_to_replace;
+        }
 
-    foreach ($array as $menu_key => $unit) {
-        $string .= $this->createUnitEntry($unit);
+        return $replace_menu;
     }
 
-    $string .= "</Menu>";
+    /**
+     * Groups the given array by @Name key
+     * @param  array $data Normalized LdapUser entity by XmlYealinkNormalizer
+     * @return array       $data array but grouped by @Name
+     */
+    private function groupByDepartment(array $data) : array
+    {
+        $groups = [];
+        foreach ($data as $group => $value) {
+            if (!array_key_exists($value["@Name"], $groups)) {
+                $groups[$value["@Name"]] = [];
+            }
 
-    return $string;
-  }
+            $groups[$value["@Name"]][] = $value["#"];
+        }
 
-  /**
-   * Creates an <Unit> element
-   * @param  array  $unit <Unit> element data
-   * @return string       returns single <Unit/>
-   */
-  private function createUnitEntry(array $unit) : string {
-    $name = $unit["first_name"]." ".$unit["last_name"];
-
-    $ipphone = $this->getPhoneNumberByType($unit["phoneNumbers"], "ipphone");
-    $cell = $this->getPhoneNumberByType($unit["phoneNumbers"], "cell");
-    $home = $this->getPhoneNumberByType($unit["phoneNumbers"], "home");
-
-    $string = '<Unit Name="'.$name.'" Phone1="'.$ipphone["value"].'" Phone2="'.$cell["value"].'" Phone3="'.$home["value"].'" default_photo="Resource:" />';
-
-    return $string;
-  }
-  /**
-   * Groups the given $array of encoded LdapUser by department key
-   * @param  array $array Encoded LdapUser array
-   * @return array        returns LdapUsers grouped by department
-   */
-  private function groupByDepartment(array $array) : array {
-    $groups = [];
-
-    foreach ($array as $key => $value) {
-      if(!is_null($value["department"]) && strlen($value["department"]) > 0) {
-        $groups[$value["department"]][] = $value;
-      } else {
-        $groups["Unasigned"][] = $value;
-      }
+        return $groups;
     }
 
-    return $groups;
-  }
-
-  /**
-   * Retrievs the encoded PhoneNumber from array of numbers by given type
-   * @param  array  $array normalized PhoneNumber array
-   * @param  string $type  the searched type
-   * @return array         returns the searched value or an array with value key as empty string
-   */
-  protected function getPhoneNumberByType(array $array, string $type) : array {
-    foreach ($array as $key => $value) {
-      if($value["type"] === $type) {
-        return $value;
-      }
+    /**
+     * Returns back the given value or null if the given array dosn't have at least one of the values
+     * @param  array  $unit One of normalized single entity data
+     * @return array|null
+     */
+    private function removeEmptyUnit(array $unit) : ?array
+    {
+        if (empty($unit["@Phone1"]) && empty($unit["@Phone2"]) && empty($nuit["@Phone3"])) {
+            return null;
+        } else {
+            return $unit;
+        }
     }
-
-    return ["value" => ""];
-  }
 }

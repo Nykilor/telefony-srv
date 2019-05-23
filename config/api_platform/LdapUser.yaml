@@ -3,16 +3,21 @@ resources:
     collectionOperations:
       get:
         method: 'GET'
+        formats:
+          0: 'json'
+          vcard: 'text/x-vcard'
+          1: 'jsonld'
+          csv: 'text/csv'
+          YealinkIPPhoneBook: application/vnd.xml.yealink
     itemOperations:
       get:
         method: 'GET'
+        formats:
+          0: 'json'
+          vcard: 'text/x-vcard'
+          1: 'jsonld'
+          csv: 'text/csv'
     attributes:
-      formats:
-        0: 'json'
-        vcard: 'text/x-vcard'
-        1: 'jsonld'
-        csv: 'text/csv'
-        YealinkIPPhoneBook: application/vnd.xml.yealink
       normalization_context:
         groups: ["read_ldap_user"]
       pagination_enabled: false

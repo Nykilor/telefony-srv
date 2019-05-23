@@ -1,41 +1,34 @@
 <?php
 namespace App\Serializer;
 
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use App\Service\XmlYealinkEncoder;
+
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 
 class YealinkIPPhoneBookEncoder implements EncoderInterface, DecoderInterface
 {
+    public $encoder;
+
+    public function __construct(XmlYealinkEncoder $encoder)
+    {
+        $this->encoder = $encoder;
+    }
 
     public function encode($data, $format, array $context = [])
     {
-      $groups = [];
-      foreach ($data as $group => $value) {
-        if(!array_key_exists($value["@Name"], $groups)) {
-          $groups[$value["@Name"]] = [];
-        }
+        $xml = $this->encoder->encode($data);
+        $response = new Response($xml);
+        $disposition = HeaderUtils::makeDisposition(
+          HeaderUtils::DISPOSITION_ATTACHMENT,
+          "contact.xml"
+        );
+        $response->headers->set('Content-Disposition', $disposition);
 
-        $groups[$value["@Name"]][] = $value["#"];
-      }
-
-      $result = [
-        "Menu" => []
-      ];
-      foreach ($groups as $key => $unitArray) {
-        foreach ($unitArray as $key => $value) {
-          //TODO 
-        }
-      }
-      var_dump($groups);
-      exit();
-      $new_array = array_merge_recursive($data[0], $data[1]);
-      $xml_encoder = new XmlEncoder();
-      $result = $xml_encoder->encode($new_array, "xml", [
-        "xml_encoding" => "utf-8",
-        "xml_root_node_name" => "YealinkIPPhoneBook"
-      ]);
-      return $result;
+        return $response;
     }
 
     public function supportsEncoding($format, array $context = [])

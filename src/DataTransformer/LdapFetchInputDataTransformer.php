@@ -26,7 +26,7 @@ final class LdapFetchInputDataTransformer implements DataTransformerInterface
     public function supportsTransformation($data, string $to, array $context = []): bool
     {
         if ($data instanceof Domain) {
-          return false;
+            return false;
         }
 
         return Domain::class === $to && null !== ($context['input']['class'] ?? null);
