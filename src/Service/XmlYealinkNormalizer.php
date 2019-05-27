@@ -2,7 +2,7 @@
 namespace App\Service;
 
 use App\Entity\LdapUser;
-use App\Entity\PhoneNumbers;
+use App\Entity\LdapPhoneNumbers;
 
 class XmlYealinkNormalizer
 {
@@ -22,11 +22,11 @@ class XmlYealinkNormalizer
           "Unit" => []
         ];
 
-        $phoneNumbers = $ldapUser->getPhoneNumbers();
+        $phoneNumbers = $ldapUser->getLdapPhoneNumbers();
         if (!is_null($phoneNumbers)) {
-            $ipphone = $this->getPhoneNumberByType($phoneNumbers, "ipphone");
-            $cell = $this->getPhoneNumberByType($phoneNumbers, "cell");
-            $home = $this->getPhoneNumberByType($phoneNumbers, "home");
+            $ipphone = $this->getLdapPhoneNumberByType($phoneNumbers, "ipphone");
+            $cell = $this->getLdapPhoneNumberByType($phoneNumbers, "cell");
+            $home = $this->getLdapPhoneNumberByType($phoneNumbers, "home");
 
             $return_array["Unit"] = [
               "@Name" => $ldapUser->getFirstName()." ".$ldapUser->getLastName(),
@@ -40,10 +40,10 @@ class XmlYealinkNormalizer
         return $return_array;
     }
 
-    protected function getPhoneNumberByType($array, string $type) : PhoneNumbers
+    protected function getLdapPhoneNumberByType($array, string $type) : LdapPhoneNumbers
     {
         foreach ($array as $key => $value) {
-            if ($value instanceof PhoneNumbers) {
+            if ($value instanceof LdapPhoneNumbers) {
                 if ($value->getType() === $type) {
                     return $value;
                 }
@@ -51,7 +51,7 @@ class XmlYealinkNormalizer
                 throw new \Exception("Error Processing Request", 1);
             }
         }
-        $emptyEntity = new PhoneNumbers();
+        $emptyEntity = new LdapPhoneNumbers();
         $emptyEntity->setValue("");
         return $emptyEntity;
     }

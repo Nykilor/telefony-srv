@@ -17,7 +17,7 @@ resources:
         input: App\Dto\LdapFetchInput
         output: false
         swagger_context:
-          summary: 'Creates LdapUsers and PhoneNumbers.'
+          summary: 'Creates LdapUsers and LdapPhoneNumbers.'
           parameters:
             - in: path
               name: id

@@ -36,32 +36,32 @@ class Domain
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $connection_schema;
+    private $connection_schema = "ActiveDirectory";
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $port;
+    private $port = 389;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $use_ssl;
+    private $use_ssl = 0;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $use_tls;
+    private $use_tls = 0;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $version;
+    private $version = 3;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $timeout;
+    private $timeout = 5;
 
     /**
      * @ORM\Column(type="array")

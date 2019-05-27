@@ -1,5 +1,5 @@
 <?php
-
+#MAKE THE PROPERTIES LIKE VIISBILITY ONLY VISIBLE TO ADMIN AND NOT TO USER< AND DON"T FETCH IT FOR USER EVEN
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,12 +15,12 @@ class LdapUser
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=false)
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=60, unique=true)
+     * @ORM\Column(type="string", length=60, unique=true, nullable=false)
      */
     private $login;
 
@@ -31,14 +31,14 @@ class LdapUser
     private $domain;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      */
-    private $first_name;
+    public $first_name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $last_name;
+    public $last_name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -71,23 +71,24 @@ class LdapUser
     private $title;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PhoneNumbers", mappedBy="ldap_user")
+     * @ORM\OneToMany(targetEntity="App\Entity\LdapPhoneNumbers", mappedBy="ldap_user")
      */
-    private $phoneNumbers;
+    private $ldapPhoneNumbers;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=false)
      */
-    private $when_changed;
+    public $when_changed;
 
     /**
-     * @ORM\Column(type="boolean", options={"default": 0})
+     * Property visible only to administrator.
+     * @ORM\Column(type="boolean", options={"default": 1})
      */
-    private $is_visible = true;
+    public $is_visible = true;
 
     public function __construct()
     {
-        $this->phoneNumbers = new ArrayCollection();
+        $this->ldapPhoneNumbers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -216,27 +217,27 @@ class LdapUser
     }
 
     /**
-     * @return Collection|PhoneNumbers[]
+     * @return Collection|LdapPhoneNumbers[]
      */
-    public function getPhoneNumbers(): Collection
+    public function getLdapPhoneNumbers(): Collection
     {
-        return $this->phoneNumbers;
+        return $this->ldapPhoneNumbers;
     }
 
-    public function addPhoneNumbers(PhoneNumbers $phoneNumbersId): self
+    public function addLdapPhoneNumbers(LdapPhoneNumbers $phoneNumbersId): self
     {
-        if (!$this->phoneNumbers->contains($phoneNumbersId)) {
-            $this->phoneNumbers[] = $phoneNumbersId;
+        if (!$this->ldapPhoneNumbers->contains($phoneNumbersId)) {
+            $this->ldapPhoneNumbers[] = $phoneNumbersId;
             $phoneNumbersId->setLdapUser($this);
         }
 
         return $this;
     }
 
-    public function removePhoneNumbers(PhoneNumbers $phoneNumbersId): self
+    public function removeLdapPhoneNumbers(LdapPhoneNumbers $phoneNumbersId): self
     {
-        if ($this->phoneNumbers->contains($phoneNumbersId)) {
-            $this->phoneNumbers->removeElement($phoneNumbersId);
+        if ($this->ldapPhoneNumbers->contains($phoneNumbersId)) {
+            $this->ldapPhoneNumbers->removeElement($phoneNumbersId);
             // set the owning side to null (unless already changed)
             if ($phoneNumbersId->getLdapUser() === $this) {
                 $phoneNumbersId->setLdapUser(null);

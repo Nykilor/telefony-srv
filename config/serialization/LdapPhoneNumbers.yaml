@@ -1,4 +1,4 @@
-App\Entity\PhoneNumbers:
+App\Entity\LdapPhoneNumbers:
   attributes:
     id:
       groups: ["read_ldap_user", "read_phone_numbers"]

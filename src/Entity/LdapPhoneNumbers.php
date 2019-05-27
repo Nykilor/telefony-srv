@@ -5,10 +5,10 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ApiResource, config in config/api_platform/PhoneNumbers.yaml
- * @ORM\Entity(repositoryClass="App\Repository\PhoneNumbersRepository")
+ * ApiResource, config in config/api_platform/LdapPhoneNumbers.yaml
+ * @ORM\Entity(repositoryClass="App\Repository\LdapPhoneNumbersRepository")
  */
-class PhoneNumbers
+class LdapPhoneNumbers
 {
     /**
      * @ORM\Id()
@@ -18,7 +18,7 @@ class PhoneNumbers
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\LdapUser", inversedBy="phoneNumbers")
+     * @ORM\ManyToOne(targetEntity="App\Entity\LdapUser", inversedBy="ldapPhoneNumbers")
      * @ORM\JoinColumn(name="ldap_user_id", nullable=false)
      */
     private $ldap_user;

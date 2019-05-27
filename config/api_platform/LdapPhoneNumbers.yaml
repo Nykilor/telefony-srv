@@ -1,5 +1,5 @@
 resources:
-  App\Entity\PhoneNumbers:
+  App\Entity\LdapPhoneNumbers:
     collectionOperations:
       get:
         method: 'GET'

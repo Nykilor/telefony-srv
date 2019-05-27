@@ -6,14 +6,13 @@ use DateTime;
 
 use App\Dto\LdapFetchInput;
 use App\Entity\LdapUser;
-use App\Entity\PhoneNumbers;
+use App\Entity\LdapPhoneNumbers;
 use Adldap\Adldap;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ActiveDirectoryFetch
 {
-    public $userCount = 0;
-    public $phoneCount = 0;
+    public $ldapUser = [];
     protected $domain;
     protected $login;
     protected $password;
@@ -67,24 +66,23 @@ class ActiveDirectoryFetch
                     $ldapUserEntity->setWhenChanged($newDate);
                     $this->entityManager->persist($ldapUserEntity);
                     $counter++;
-                    $this->userCount++;
+                    $this->ldapUser[] = $ldapUserEntity;
                 }
                 //Batch adding
-                if ($counter === 5) {
+                if ($counter === 3) {
                     $this->entityManager->flush();
                     $counter = 0;
                 }
             }
         }
         //Add the rest
-        if ($counter > 0 && $this->userCount > 0 || $this->phoneCount > 0) {
+        if ($counter > 0) {
             $this->entityManager->flush();
         }
 
         return [
-      "userCount" => $this->userCount,
-      "phoneCount" => $this->phoneCount
-    ];
+            "LdapUser" => $this->ldapUser
+        ];
     }
 
     private function getOrCreateLdapUserEntity(\Adldap\Models\User $adldapUserModel) : ?LdapUser
@@ -117,7 +115,7 @@ class ActiveDirectoryFetch
 
     private function getOrCreatePhoneNumbersEntity(\Adldap\Models\User $adldapUserModel, LdapUser $ldapUserEntity) : LdapUser
     {
-        $repository = $this->entityManager->getRepository(PhoneNumbers::class);
+        $repository = $this->entityManager->getRepository(LdapPhoneNumbers::class);
         $phones = [];
 
         $phones[] = [
@@ -144,8 +142,8 @@ class ActiveDirectoryFetch
             //Check if it exists in the database
             $phoneNumbersEntity = $repository->findOneBy(["value" => $phone["value"]]);
             //If no entry in database create a new Entity
-            if (!($phoneNumbersEntity instanceof PhoneNumbers)) {
-                $phoneNumbersEntity = new PhoneNumbers();
+            if (!($phoneNumbersEntity instanceof LdapPhoneNumbers)) {
+                $phoneNumbersEntity = new LdapPhoneNumbers();
             } elseif ($phoneNumbersEntity->getLdapUser()->getId() === $ldapUserEntity->getId()) {
                 //Continue if the current value didn't change it's owner
                 continue;
@@ -154,8 +152,7 @@ class ActiveDirectoryFetch
             $phoneNumbersEntity->setType($phone["type"]);
             $phoneNumbersEntity->setValue($phone["value"]);
             $this->entityManager->persist($phoneNumbersEntity);
-            $this->phoneCount++;
-            $ldapUserEntity->addPhoneNumbers($phoneNumbersEntity);
+            $ldapUserEntity->addLdapPhoneNumbers($phoneNumbersEntity);
         }
 
         return $ldapUserEntity;

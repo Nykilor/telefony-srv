@@ -22,9 +22,9 @@ App\Entity\LdapUser:
       groups: ["read_ldap_user"]
     title:
       groups: ["read_ldap_user"]
-    phoneNumbers:
+    ldapPhoneNumbers:
       groups: ["read_ldap_user"]
     when_changed:
       groups: ["read_ldap_user"]
     is_visible:
-      groups: ["read_ldap_user"]
+      groups: ["admin:read"]

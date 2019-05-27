@@ -32,6 +32,10 @@ services:
         class: App\EventListener\AuthenticationSuccessListener
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
+    #LdapUser Normalizer - makes sure that no LdapUser with is_visible false to be serialized to User
+    # App\Serializer\LdapUserNormalizer:
+    #   tags: ['serializer.normalizer']
+
     #YeastarIPPhoneBOok mime TYPE
     App\Serializer\YealinkIPPhoneBookEncoder:
       tags: ['serializer.encoder']
@@ -41,6 +45,13 @@ services:
     #VCARD MIME TYPE
     App\Serializer\VcardEncoder:
       tags: ['serializer.encoder']
-
-    App\Serializer\VcardNormalizer:
-      tags: ['serializer.normalizer']
+    #admin:write admin:read
+    App\Serializer\AdminContextBuilder:
+      decorates: 'api_platform.serializer.context_builder'
+      arguments: ['@App\Serializer\AdminContextBuilder.inner']
+      autoconfigure: false
+    #Doctrine extension for making only is_visible true fetched for not admins
+    App\Doctrine\IsVisibleLdapUser:
+        tags:
+            - { name: api_platform.doctrine.orm.query_extension.collection }
+            - { name: api_platform.doctrine.orm.query_extension.item }

@@ -5,7 +5,7 @@ namespace App\Service;
 use JeroenDesloovere\VCard\VCard;
 
 use App\Exception\SerializationEncodeOperationTypeException;
-use App\Exception\PhoneNumbersUnknownTypeException;
+use App\Exception\LdapPhoneNumbersUnknownTypeException;
 
 class VcardVcfEncoder
 {
@@ -56,7 +56,7 @@ class VcardVcfEncoder
             $vcard->addPhoneNumber($phoneNumber['value'], "WORK;VOICE");
             break;
           default:
-            throw new PhoneNumbersUnknownTypeException("Undefined type.", 1);
+            throw new LdapPhoneNumbersUnknownTypeException("Undefined type.", 1);
             break;
         }
         }

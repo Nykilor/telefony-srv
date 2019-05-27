@@ -22,7 +22,7 @@ resources:
         groups: ["read_ldap_user"]
       pagination_enabled: false
     properties:
-      phoneNumbers:
+      ldapPhoneNumbers:
           subresource:
-              resourceClass: 'App\Entity\PhoneNumbers'
+              resourceClass: 'App\Entity\LdapPhoneNumbers'
               collection: true

@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\PhoneNumbers;
+use App\Entity\LdapPhoneNumbers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method PhoneNumbers|null find($id, $lockMode = null, $lockVersion = null)
- * @method PhoneNumbers|null findOneBy(array $criteria, array $orderBy = null)
- * @method PhoneNumbers[]    findAll()
- * @method PhoneNumbers[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method LdapPhoneNumbers|null find($id, $lockMode = null, $lockVersion = null)
+ * @method LdapPhoneNumbers|null findOneBy(array $criteria, array $orderBy = null)
+ * @method LdapPhoneNumbers[]    findAll()
+ * @method LdapPhoneNumbers[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PhoneNumbersRepository extends ServiceEntityRepository
+class LdapPhoneNumbersRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, PhoneNumbers::class);
+        parent::__construct($registry, LdapPhoneNumbers::class);
     }
 
     // /**
-    //  * @return PhoneNumbers[] Returns an array of PhoneNumbers objects
+    //  * @return LdapPhoneNumbers[] Returns an array of LdapPhoneNumbers objects
     //  */
     /*
     public function findByExampleField($value)
