@@ -10,6 +10,9 @@ use App\Entity\LdapPhoneNumbers;
 use Adldap\Adldap;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Fetches the Ldap User data from given server and closes it into $this->ldapUser variable
+ */
 class ActiveDirectoryFetch
 {
     public $ldapUser = [];
@@ -32,27 +35,26 @@ class ActiveDirectoryFetch
 
         $domain = $this->connectByLdap();
 
+        //Either all users or by the given query
         switch ($this->query) {
-      case 'allUsers':
-        $users = $domain->search()->users()->get();
-        break;
+            case 'allUsers':
+            $users = $domain->search()->users()->get();
+            break;
 
-      default:
-        $users = $domain->search()->users()->in($this->query)->get();
-        break;
-    }
+        default:
+            $users = $domain->search()->users()->in($this->query)->get();
+            break;
+        }
 
-        // $users = unserialize(file_get_contents("serializedforhome.txt"));
         $databaseEntries = [];
         $counter = 0;
 
         foreach ($users as $key => $adldapUserModel) {
-            //Write on github about this
-            $ldapUserEntity = $this->getOrCreateLdapUserEntity($adldapUserModel);
+            $ldapUserEntity = $this->fetchOrCreateLdapUserEntity($adldapUserModel);
             if (!is_null($ldapUserEntity)) {
                 $declaredDate = $ldapUserEntity->getWhenChanged();
                 $newDate = new DateTime(str_replace(".0Z", "", $adldapUserModel->getUpdatedAt()));
-                $ldapUserEntity = $this->getOrCreatePhoneNumbersEntity($adldapUserModel, $ldapUserEntity);
+                $ldapUserEntity = $this->fetchOrCreatePhoneNumbersEntity($adldapUserModel, $ldapUserEntity);
 
                 if (is_null($declaredDate)) {
                     $letPersist = true;
@@ -85,7 +87,12 @@ class ActiveDirectoryFetch
         ];
     }
 
-    private function getOrCreateLdapUserEntity(\Adldap\Models\User $adldapUserModel) : ?LdapUser
+    /**
+     * Tries to get LdapUser entity by given login or creates a new one
+     * @param  \Adldap\Models\User $adldapUserModel
+     * @return LdapUser|null
+     */
+    private function fetchOrCreateLdapUserEntity(\Adldap\Models\User $adldapUserModel) : ?LdapUser
     {
         $repositoryLdapUser = $this->entityManager->getRepository(LdapUser::class);
         $userEntity = $repositoryLdapUser->findOneBy(["login" => $this->domain->getPrefix()."\\".$adldapUserModel->getAccountName()]);
@@ -113,7 +120,13 @@ class ActiveDirectoryFetch
         return $userEntity;
     }
 
-    private function getOrCreatePhoneNumbersEntity(\Adldap\Models\User $adldapUserModel, LdapUser $ldapUserEntity) : LdapUser
+    /**
+     * Tries to get or create LdapPhoneNumbers by given Adldap\Models\User nad App\Entity\LdapUser, adds them to persist list.
+     * @param  \Adldap\Models\User $adldapUserModel
+     * @param  LdapUser         $ldapUserEntity
+     * @return LdapUser         If there's any LdapPhoneNumbers it is added the LdapUser->ldapPhoneNumbers collection
+     */
+    private function fetchOrCreatePhoneNumbersEntity(\Adldap\Models\User $adldapUserModel, LdapUser $ldapUserEntity) : LdapUser
     {
         $repository = $this->entityManager->getRepository(LdapPhoneNumbers::class);
         $phones = [];
@@ -157,7 +170,10 @@ class ActiveDirectoryFetch
 
         return $ldapUserEntity;
     }
-
+    /**
+     * Connect to Ldap server by given credentials
+     * @return  [description]
+     */
     private function connectByLdap()
     {
         $user = $this->login;
@@ -166,19 +182,26 @@ class ActiveDirectoryFetch
 
         // Create the configuration array.
         $ldapClass = $entity->getConnectionSchema();
-        //Do ogarniecia tak, żeby ładowało ok
-        // $schema = '\Adldap\Schemas\ActiveDirectory::class';
-        // var_dump($schema);
-        // $class = new $schema();
+        switch ($ldapClass) {
+            case 'OpenLDAP':
+                $connection_schema = \Adldap\Schemas\OpenLDAP::class;
+                break;
+            case 'FreeIPA':
+                $connection_schema = \Adldap\Schemas\FreeIPA::class;
+                break;
+            default:
+                $connection_schema = \Adldap\Schemas\ActiveDirectory::class;
+                break;
+        }
 
         $config = [
             // Mandatory Configuration Options
             'hosts'            => $entity->getHosts(),
             'base_dn'          => $entity->getBaseDn(),
-            'username'         => $entity->getPrefix()."\\".$user,
+            'username'         => $user,
             'password'         => $password,
             // Optional Configuration Options
-            'schema'           => \Adldap\Schemas\ActiveDirectory::class,
+            'schema'           => $connection_schema,
             'account_prefix'   => $entity->getPrefix(),
             'port'             => $entity->getPort(),
             'use_ssl'          => $entity->getUseSsl(),

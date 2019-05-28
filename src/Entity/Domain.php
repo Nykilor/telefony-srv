@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ApiResource, config in config/api_platform/Domain.yaml
@@ -35,6 +36,7 @@ class Domain
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Choice({"ActiveDirectory", "FreeIPA", "OpenLDAP"})
      */
     private $connection_schema = "ActiveDirectory";
 
@@ -55,6 +57,10 @@ class Domain
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(
+     *  min = 2,
+     *  max = 3
+     * )
      */
     private $version = 3;
 

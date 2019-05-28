@@ -12,7 +12,7 @@ resources:
         method: 'DELETE'
       LdapGetData:
         method: 'POST'
-        path: '/domain/ldap_fetch/{id}'
+        path: '/ldap_fetch/{id}'
         controller: App\Controller\LdapFetchController
         input: App\Dto\LdapFetchInput
         output: false
