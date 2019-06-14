@@ -19,6 +19,11 @@ class LdapFetchController extends AbstractController
     public function __invoke(LdapFetchInput $data)
     {
         $response = $this->ad->fetchData($data);
-        return $this->json($response);
+        if (!empty($response)) {
+            $status = 201;
+        } else {
+            $status = 204;
+        }
+        return $this->json($response, $status);
     }
 }

@@ -2,6 +2,8 @@
 #MAKE THE PROPERTIES LIKE VIISBILITY ONLY VISIBLE TO ADMIN AND NOT TO USER< AND DON"T FETCH IT FOR USER EVEN
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -9,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ApiResource, config in config/api_platform/LdapUser.yaml
  * @ORM\Entity(repositoryClass="App\Repository\LdapUserRepository")
+ * @ApiFilter(SearchFilter::class, properties={"id": "exact", "login": "partial"})
  */
 class LdapUser
 {

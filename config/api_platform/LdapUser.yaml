@@ -17,10 +17,12 @@ resources:
           vcard: 'text/x-vcard'
           1: 'jsonld'
           csv: 'text/csv'
+      put: ~
     attributes:
       normalization_context:
         groups: ["read_ldap_user"]
-      pagination_enabled: false
+      denormalization_context:
+        groups: ["edit_ldap_user"]
     properties:
       ldapPhoneNumbers:
           subresource:

@@ -3,6 +3,8 @@
 namespace App\Serializer;
 
 use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
+use App\Entity\LdapUser;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -25,7 +27,9 @@ final class AdminContextBuilder implements SerializerContextBuilderInterface
         $context = $this->decorated->createFromRequest($request, $normalization, $extractedAttributes);
         // Add `admin:read` for normalization requests
         // Otherwise, add `admin:write` for denormalization requests
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+        $resourceClass = $context["resource_class"] ?? null;
+
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && $resourceClass === LdapUser::class) {
             $context['groups'][] = $normalization ? 'admin:read' : 'admin:write';
         }
 

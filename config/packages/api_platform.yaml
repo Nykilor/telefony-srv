@@ -8,6 +8,10 @@ api_platform:
           - '%kernel.project_dir%/config/api_platform' # yaml or xml directory configuration
     exception_to_status:
         Adldap\Auth\BindException: 400
+    collection:
+        pagination:
+            client_items_per_page: true
+            items_per_page_parameter_name: "perPage"
     swagger:
          api_keys:
              apiKey:

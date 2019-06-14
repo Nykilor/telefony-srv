@@ -25,7 +25,7 @@ class Domain
     private $prefix;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="json")
      */
     private $hosts = [];
 
@@ -70,7 +70,7 @@ class Domain
     private $timeout = 5;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="json")
      */
     private $custom = [];
 
@@ -192,7 +192,7 @@ class Domain
         return $this->custom;
     }
 
-    public function setCustom(array $custom): self
+    public function setCustom(?array $custom): self
     {
         $this->custom = $custom;
 

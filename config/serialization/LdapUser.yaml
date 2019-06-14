@@ -27,4 +27,4 @@ App\Entity\LdapUser:
     when_changed:
       groups: ["read_ldap_user"]
     is_visible:
-      groups: ["admin:read"]
+      groups: ["admin:read", "edit_ldap_user", "admin:write"]
